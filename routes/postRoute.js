@@ -14,11 +14,21 @@ mongoose
     .then(() => console.log("Database Connected"))
     .catch((err) => { console.log(err) });
 
-router.post('/userSignup', userController.create);
-router.post('/login', authMiddleware, userController.authenticate);
+router.post('/auth/signup', userController.create);
+router.post('/auth/login', authMiddleware, userController.authenticate);
 
 
 // for each user to enter their post details
+// swagger doucumentation of post api route
+/**
+ * @swagger
+ * /posts:
+ *  post:
+ *     description: use to add a post     
+ *     responses:
+ *      '200':
+ *        description: Post created successfully          
+ */
 router.post('/', (req, res) => {
     const newPost = new postModel(
         {
@@ -34,6 +44,16 @@ router.post('/', (req, res) => {
     console.log('New post', newPost)
 });
 //This logic extracts all the posts by A USER.
+/**
+  * @swagger
+  * /posts:
+  *  get:
+  *     summary: To get all posts
+  *     description: use to get all posts  
+  *     responses: 
+  *         200:
+  *             description: This api is used to fetch all posts          
+  */
 router.get('/', async (req, res) => {
     const Posts = await postModel.find()
 
@@ -41,7 +61,17 @@ router.get('/', async (req, res) => {
     res.json(Posts)
 });
 
-//Logic uses the parcel id to get One Post of a user
+//Logic uses the post id to get One Post of a user
+/**
+  * @swagger
+  * /posts/:id/posts:
+  *  get:
+  *     summary: To get all post
+  *     description: use this api to fetch a post 
+  *     responses: 
+  *         200:
+  *             description: This api is used to fetch post          
+  */
 router.get('/:id', async (req, res) => {
     const Post = await postModel.findById(req.params.id).exec();
     if (!Post) {
@@ -68,7 +98,17 @@ router.get('/postTitle/:id', async (req, res) => {
 });
 
 // Logic edits the post details
-router.put('/edit/:id', async (req, res) => {
+/**
+  * @swagger
+  * /posts/:id/post:
+  *  put:
+  *     summary: To edit a user post
+  *     description: use this api to edit a specific user post 
+  *     responses: 
+  *         200:
+  *             description: This api is used to update post         
+  */
+router.put('/edit/:id', authMiddleware, async (req, res) => {
     const Post = await postModel.findById(req.params.id);
     console.log(Post)
     if (!Post) {
@@ -84,7 +124,17 @@ router.put('/edit/:id', async (req, res) => {
 });
 
 // Logic for deleting a post
-router.delete('/cancel/:id', async (req, res) => {
+/**
+  * @swagger
+  * /posts/:id/post:
+  *  delete:
+  *     summary: To get all tasks 
+  *     description: use this api to delete a post 
+  *     responses: 
+  *         200:
+  *             description: This api is used to delete post input          
+  */
+router.delete('/cancel/:id', authMiddleware, async (req, res) => {
     const Post = await postModel.findByIdAndRemove(req.params.id).exec()
     console.log('Post index', Post)
     if (!Post) res.status(404).send('post with the given id does not exist')

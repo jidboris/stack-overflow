@@ -68,13 +68,6 @@ const authenticate = async (req, res, next) => {
 
 };
 
-//     else {
-//         res.json({
-//             status: 'error',
-//             Message: "incorrect email or user does not exist "
-//         })
-//     }
-// };
 
 module.exports = {
     create,
