@@ -19,7 +19,7 @@ router.post('/login', authMiddleware, userController.authenticate);
 
 
 // for each user to enter their post details
-router.post('/', authMiddleware,(req, res) => {
+router.post('/', (req, res) => {
     const newPost = new postModel(
         {
             Title: req.body.Title,
@@ -68,7 +68,7 @@ router.get('/postTitle/:id', async (req, res) => {
 });
 
 // Logic edits the post details
-router.put('/postEdit/:id', async (req, res) => {
+router.put('/edit/:id', async (req, res) => {
     const Post = await postModel.findById(req.params.id);
     console.log(Post)
     if (!Post) {
@@ -84,7 +84,7 @@ router.put('/postEdit/:id', async (req, res) => {
 });
 
 // Logic for deleting a post
-router.delete('/postDelete/:id', async (req, res) => {
+router.delete('/cancel/:id', async (req, res) => {
     const Post = await postModel.findByIdAndRemove(req.params.id).exec()
     console.log('Post index', Post)
     if (!Post) res.status(404).send('post with the given id does not exist')
